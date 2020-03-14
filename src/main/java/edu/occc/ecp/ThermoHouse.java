@@ -50,6 +50,7 @@ public class ThermoHouse {
 
     /**
      * Get all rooms
+     *
      * @return the rooms
      */
     public List<ThermoRoom> getRooms() {
@@ -58,6 +59,7 @@ public class ThermoHouse {
 
     /**
      * Set all rooms
+     *
      * @param rooms the rooms to set
      */
     public void setRooms(List<ThermoRoom> roomList) {
