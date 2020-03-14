@@ -3,12 +3,15 @@ package edu.occc.ecp;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.occc.ecp.GeoLocation.GeoLocation;
+
 /**
  * ThermoHouse
  */
 public class ThermoHouse {
 
     private List<ThermoRoom> rooms = new ArrayList<ThermoRoom>();
+    private GeoLocation location = new GeoLocation();
 
     /**
      * Create a ThermoHouse with multiple rooms
@@ -26,7 +29,7 @@ public class ThermoHouse {
      * @param room ThermoRoom
      */
     public ThermoHouse(ThermoRoom room) {
-        this.rooms.add(room);
+        this(new ThermoRoom[] { room });
     }
 
     /**
@@ -45,7 +48,7 @@ public class ThermoHouse {
      * @param temperature
      */
     public ThermoHouse(double temperature) {
-        this.rooms.add(new ThermoRoom(temperature));
+        this(new double[] { temperature });
     }
 
     /**
@@ -87,5 +90,31 @@ public class ThermoHouse {
      */
     public void setRoom(int index, ThermoRoom room) {
         this.rooms.set(index, room);
+    }
+
+    /**
+     * @return the location
+     */
+    public GeoLocation getLocation() {
+        return location;
+    }
+
+    /**
+     * set the latitude and longitude using GeoLocation
+     *
+     * @param location the location to set
+     */
+    public void setLocation(GeoLocation location) {
+        this.location = location;
+    }
+
+    /**
+     * set the latitude and longitude using doubles
+     *
+     * @param lat latitude to set
+     * @param lng longitude to set
+     */
+    public void setLocation(double lat, double lng) {
+        this.location = new GeoLocation(lat, lng);
     }
 }
