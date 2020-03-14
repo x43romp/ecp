@@ -1,63 +1,89 @@
 package edu.occc.ecp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * ThermoHouse
  */
 public class ThermoHouse {
 
-    private int TempRoom1;
-    private int TempRoom2;
-    private int TempRoom3;
-    private int EastFacingWindow;
+    private List<ThermoRoom> rooms = new ArrayList<ThermoRoom>();
 
-    public ThermoHouse(int TempRoom1, int TempRoom2, int TempRoom3, int EastFacingWindow) {
-
-        this.TempRoom1 = TempRoom1;
-        this.TempRoom2 = TempRoom2;
-        this.TempRoom3 = TempRoom3;
-        this.EastFacingWindow = EastFacingWindow;
+    /**
+     * Create a ThermoHouse with multiple rooms
+     *
+     * @param rooms array of ThermoRooms
+     */
+    public ThermoHouse(ThermoRoom[] rooms) {
+        for (ThermoRoom room : rooms)
+            this.rooms.add(room);
     }
 
-    public ThermoHouse(ThermoHouse t) {
-        TempRoom1 = t.getTempRoom1();
-        TempRoom2 = t.getTempRoom2();
-        TempRoom3 = t.getTempRoom3();
-        EastFacingWindow = t.getEastFacingWindow();
-
+    /**
+     * Create a ThermoHouse with one room
+     *
+     * @param room ThermoRoom
+     */
+    public ThermoHouse(ThermoRoom room) {
+        this.rooms.add(room);
     }
 
-    //
-    public int getEastFacingWindow() {
-        // TODO Auto-generated method stub
-        return EastFacingWindow;
+    /**
+     * Create a ThermoHouse with multiple rooms using temperatures
+     *
+     * @param temperatures
+     */
+    public ThermoHouse(double[] temperatures) {
+        for (double temperature : temperatures)
+            this.rooms.add(new ThermoRoom(temperature));
     }
 
-    public void setEastFacingWindow(int EastFacingWindow) {
-        this.EastFacingWindow = EastFacingWindow;
+    /**
+     * Create a ThermoHouse with one room using temperature
+     *
+     * @param temperature
+     */
+    public ThermoHouse(double temperature) {
+        this.rooms.add(new ThermoRoom(temperature));
     }
 
-    public int getTempRoom1() {
-        return TempRoom1;
+    /**
+     * Get all rooms
+     * @return the rooms
+     */
+    public List<ThermoRoom> getRooms() {
+        return this.rooms;
     }
 
-    public void setTempRoom1(int TempRoom1) {
-        this.TempRoom1 = TempRoom1;
+    /**
+     * Set all rooms
+     * @param rooms the rooms to set
+     */
+    public void setRooms(List<ThermoRoom> roomList) {
+        this.rooms.clear();
+        for (ThermoRoom room : roomList) {
+            this.rooms.add(room);
+        }
     }
 
-    public int getTempRoom2() {
-        return TempRoom2;
+    /**
+     * Get one room by index
+     *
+     * @param index the index of the room
+     * @return returns room at an index
+     */
+    public ThermoRoom getRoom(int index) {
+        return this.rooms.get(index);
     }
 
-    public void setTempRoom2(int TempRoom2) {
-        this.TempRoom2 = TempRoom2;
+    /**
+     * Sets one room by index
+     *
+     * @param index the index of the room
+     * @param room  ThermoRoom
+     */
+    public void setRoom(int index, ThermoRoom room) {
+        this.rooms.set(index, room);
     }
-
-    public int getTempRoom3() {
-        return TempRoom3;
-    }
-
-    public void setTempRoom3(int TempRoom3) {
-        this.TempRoom3 = TempRoom3;
-    }
-
 }
