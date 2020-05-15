@@ -59,6 +59,16 @@ public class ThermoHouse {
 
     // FUNCTIONS
     public void update() {
+        // set mode by getting average
+        double sum = 0;
+        for (ThermoRoom room : rooms) {
+            sum += room.getTemperature();
+        }
+        double average = sum / rooms.size();
+        mode = (average < temperature) ? MODE_HEAT : //
+                (average > temperature) ? MODE_AC : //
+                        MODE_OFF;
+
         for (ThermoRoom room : rooms) {
             double target = temperature;
             target = (mode == MODE_AC) ? temperature - tolerance : target;
@@ -108,5 +118,19 @@ public class ThermoHouse {
      */
     public void setRoom(int index, ThermoRoom room) {
         this.rooms.set(index, room);
+    }
+
+    /**
+     * @return the temperature
+     */
+    public double getTemperature() {
+        return temperature;
+    }
+
+    /**
+     * @param temperature the temperature to set
+     */
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
     }
 }
