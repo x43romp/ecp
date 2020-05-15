@@ -1,26 +1,45 @@
+import java.util.Random;
+
 import javafx.application.Application;
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
+import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-public class ECP extends Application {
+import edu.occc.ecp.ThermoHouse;
+
+public class ECP extends Application implements EventHandler {
+
+    // Thermo House
+    private ThermoHouse house;
+
+    // Temperature Information
+    private Spinner<Integer> targetTemp = new Spinner<Integer>();
+    private SpinnerValueFactory<Integer> targetVal = //
+            new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 150, 70);
+    private Button targetAuto = new Button("AUTO");
+    private Button targetOff = new Button("OFF");
+    private Label targetStatus = new Label("Mode: AC");
+
+    // Room Information
+    private ComboBox roomSelector = new ComboBox();
+    private Label roomStatus = new Label("Select a room to get information");
 
     private static final Color color = Color.web("#464646");
     Button button3 = new Button("Down");
     DropShadow shadow = new DropShadow();
     Label label = new Label();
-
 
     public static void main(String[] args) {
         launch(args);
@@ -30,127 +49,97 @@ public class ECP extends Application {
     public void start(Stage stage) {
         Scene scene = new Scene(new Group());
         stage.setTitle("Environmental Control Program");
-        stage.setWidth(500);
-        stage.setHeight(500);
+        stage.setWidth(150);
+        stage.setHeight(200);
 
-        label.setFont(Font.font("Times New Roman", 22));
-        label.setTextFill(color);
+        // Setup House
+        String[] roomNames = new String[] { "Living Room", "Master Bedroom", "Bathroom", "Kitchen", "Guest Room",
+                "Office", "Den", "Basement", "Garage", "Kid's Room" };
+        int roomCount = new Random().nextInt(7) + 3;
+        double[] roomTemps = new double[roomCount];
+        String[] rooms = new String[roomCount + 1];
+        rooms[0] = "All";
+        for (int i = 0; i < roomTemps.length; i++) {
+            roomTemps[i] = 70 - 15 + new Random().nextDouble() * 30;
+            rooms[i + 1] = roomNames[i];
+        }
+        house = new ThermoHouse(roomTemps);
 
-       // Image imageDecline = new Image(getClass().getResourceAsStream("not.png"));
-       // Image imageAccept = new Image(getClass().getResourceAsStream("ok.png"));
+        // Setup container
+        VBox container = new VBox();
 
-        VBox vbox = new VBox();
-        vbox.setLayoutX(20);
-        vbox.setLayoutY(20);
-        HBox hbox1 = new HBox();
-        HBox hbox2 = new HBox();
+        // Setup Temeprature Panel
+        Label targetLabel = new Label("HOUSE TEMPERATURE");
+        targetTemp.setValueFactory(targetVal);
 
-        //Button button2 = new Button("Accept", new ImageView(imageAccept));
-        Button button1 = new Button();
-        button1.setStyle("-fx-font: 22 arial; -fx-base: #b6e7c9;");
-        button1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                label.setText("Accepted");
-            }
-        });
+        GridPane pane = new GridPane();
+        pane.setHgap(0);
+        pane.getColumnConstraints().add(new ColumnConstraints(75));
+        pane.getColumnConstraints().add(new ColumnConstraints(75));
 
+        targetAuto.setMaxWidth(Double.MAX_VALUE);
+        targetOff.setMaxWidth(Double.MAX_VALUE);
 
-        Button button2 = new Button("Up");
-        button2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                label.setText("Temperature is going up");
-            }
-        });
+        targetAuto.setOnAction(this);
+        targetOff.setOnAction(this);
 
-        button3.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                 label.setText("Temperature is going down");
-            }
-        });
+        pane.add(targetLabel, 0, 0, 2, 1);
+        pane.add(targetTemp, 0, 1, 2, 1);
+        pane.add(targetAuto, 0, 2);
+        pane.add(targetOff, 1, 2);
+        container.getChildren().add(pane);
 
-        button3.addEventHandler(MouseEvent.MOUSE_ENTERED,
-                new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent e) {
-                button3.setEffect(shadow);
-            }
-        });
+        // Setup Room View
+        roomSelector = new ComboBox(FXCollections.observableArrayList(rooms));
+        roomSelector.setMaxWidth(Double.MAX_VALUE);
+        roomSelector.setValue("All");
+        roomSelector.setOnAction(this);
+        pane.add(roomSelector, 0, 4, 2, 1);
+        pane.add(roomStatus, 0, 5, 2, 1);
 
-        button3.addEventHandler(MouseEvent.MOUSE_EXITED,
-                new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent e) {
-                button3.setEffect(null);
-            }
-        });
+        updateToggle(true);
+        updateInfo();
 
-
-        hbox1.getChildren().add(button2);
-        hbox1.getChildren().add(button3);
-        hbox1.getChildren().add(label);
-        hbox1.setSpacing(10);
-        hbox1.setAlignment(Pos.BOTTOM_CENTER);
-
-        Button button4 = new Button("On");
-   //     button4.setGraphic(new ImageView(imageAccept));
-        button4.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                label.setText("Thermostat On");
-            }
-        });
-
-
-        Button button5 = new Button("Off");
-     //   button5.setGraphic(new ImageView(imageDecline));
-        button5.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                label.setText("Thermostat Off");
-            }
-        });
-
-        hbox2.getChildren().add(button4);
-        hbox2.getChildren().add(button5);
-        hbox2.setSpacing(25);
-
-        vbox.getChildren().add(button1);
-        vbox.getChildren().add(hbox1);
-        vbox.getChildren().add(hbox2);
-        vbox.setSpacing(10);
-        ((Group)scene.getRoot()).getChildren().add(vbox);
-
+        scene = new Scene(container, 100, 200);
         stage.setScene(scene);
         stage.show();
     }
-}
 
-    
-    
-    /* 		
-    Button buttonDown = new Button("Down");
-    Button buttonDesiredTemp = new Button("Desired Temperature");
-    Button buttonActualTemp = new Button("Actual Temperature");
-    Button buttonOn = new Button("On");
-    Button buttonOff = new Button("Off");
-    Button buttonNextRoom = new Button ("Next Room");
-    Button buttonLastRoom = new Button ("Last Room");
-    
-    
-    try {
-        BorderPane root = new BorderPane();
-        Scene scene = new Scene(buttonUp, 400, 400);
-        scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    } catch (Exception e) {
-        e.printStackTrace();
+    @Override
+    public void handle(Event event) {
+        if (event.getSource() == roomSelector) {
+            updateInfo();
+        } else if (event.getSource() == targetAuto) {
+            updateToggle(true);
+        } else if (event.getSource() == targetOff) {
+            updateToggle(false);
+        } else if (event.getSource() == targetTemp) {
+            targetTemp.getValue();
+        }
+
     }
-    
-    
-    primaryStage.setTitle("Environmental Control Program");
-    
 
-    
+    public void updateToggle(boolean on) {
+        targetAuto.setDisable(on);
+        targetOff.setDisable(!on);
+    }
 
+    public void updateInfo() {
+
+        int room = roomSelector.getSelectionModel().getSelectedIndex();
+        double temp = 0;
+        String vents = "-";
+        if (room == 0) {
+            int size = house.getRooms().size();
+            double total = 0;
+            for (int i = 0; i < size; i++) {
+                total += house.getRoom(i).getTemperature();
+            }
+            temp = total / size;
+        } else {
+            room = room - 1;
+            temp = house.getRoom(room).getTemperature();
+        }
+        roomStatus.setText(String.format("Temp: %.0f\nVents: %s", temp, vents));
+    }
 }
-
-}
-
-*/
