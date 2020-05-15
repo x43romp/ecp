@@ -8,9 +8,9 @@ import java.util.List;
  */
 public class ThermoHouse {
 
-    static int MODE_OFF = 0;
-    static int MODE_AC = 1;
-    static int MODE_HEAT = 2;
+    public static int MODE_OFF = 0;
+    public static int MODE_AC = 1;
+    public static int MODE_HEAT = 2;
 
     private int mode;
     private double temperature;
@@ -61,18 +61,26 @@ public class ThermoHouse {
     public void update() {
         // set mode by getting average
         double sum = 0;
+        int under = 0;
+        int over = 0;
         for (ThermoRoom room : rooms) {
             sum += room.getTemperature();
+            under = (room.getTemperature() < temperature) ? under + 1 : under;
+            over = (room.getTemperature() > temperature) ? over + 1 : over;
         }
         double average = sum / rooms.size();
-        mode = (average < temperature) ? MODE_HEAT : //
-                (average > temperature) ? MODE_AC : //
-                        MODE_OFF;
+        if(under + over == 0) {
+            mode = MODE_OFF;
+        } else if (under > 0) {
+            mode = MODE_HEAT;
+        } else if (over > 0) {
+            mode = MODE_AC;
+        }
 
         for (ThermoRoom room : rooms) {
             double target = temperature;
-            target = (mode == MODE_AC) ? temperature - tolerance : target;
-            target = (mode == MODE_HEAT) ? temperature + tolerance : target;
+            // target = (mode == MODE_AC) ? temperature - tolerance : target;
+            // target = (mode == MODE_HEAT) ? temperature + tolerance : target;
             room.update(target, mode);
         }
     }
@@ -132,5 +140,14 @@ public class ThermoHouse {
      */
     public void setTemperature(double temperature) {
         this.temperature = temperature;
+    }
+
+    /**
+     * @return the mode
+     */
+    public String getMode() {
+        return (mode == MODE_AC) ? "AC" : //
+                (mode == MODE_HEAT) ? "HEAT" : //
+                        "OFF";
     }
 }

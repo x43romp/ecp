@@ -5,8 +5,8 @@ package edu.occc.ecp;
  */
 public class ThermoRoom {
 
-    static int STATUS_OFF = 0;
-    static int STATUS_ON = 1;
+    public static int STATUS_OFF = 0;
+    public static int STATUS_ON = 1;
 
     private int status;
     private double temperature;
@@ -18,10 +18,12 @@ public class ThermoRoom {
     // FUNCTIONS
     public void update(double target, int mode) {
         if (mode == ThermoHouse.MODE_AC && temperature > target) {
-            temperature = temperature * 0.95f;
+            temperature = temperature * 0.99f;
+            temperature = Math.round(temperature);
             status = 1;
         } else if (mode == ThermoHouse.MODE_HEAT && temperature < target) {
-            temperature = temperature * 1.05f;
+            temperature = temperature * 1.01f;
+            temperature = Math.round(temperature);
             status = 1;
         } else {
             status = 0;
