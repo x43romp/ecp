@@ -5,10 +5,38 @@ package edu.occc.ecp;
  */
 public class ThermoRoom {
 
+    static int STATUS_OFF = 0;
+    static int STATUS_ON = 1;
+
+    private int status;
     private double temperature;
 
     public ThermoRoom(double temperature) {
         this.temperature = temperature;
+    }
+
+    // FUNCTIONS
+    public void update(double target, int mode) {
+        if (mode == ThermoHouse.MODE_AC && temperature > target) {
+            temperature = temperature * 0.95f;
+            status = 1;
+        } else if (mode == ThermoHouse.MODE_HEAT && temperature < target) {
+            temperature = temperature * 1.05f;
+            status = 1;
+        } else {
+            status = 0;
+        }
+    }
+
+    // GSET
+
+    /**
+     * Gets the status of the Room STATUS_OFF, STATUS_ON
+     *
+     * @return the status
+     */
+    public int getStatus() {
+        return status;
     }
 
     /**

@@ -10,6 +10,14 @@ import edu.occc.ecp.GeoLocation.GeoLocation;
  */
 public class ThermoHouse {
 
+    static int MODE_OFF = 0;
+    static int MODE_AC = 1;
+    static int MODE_HEAT = 2;
+
+    private int mode;
+    private double temperature;
+    private double tolerance;
+
     private List<ThermoRoom> rooms = new ArrayList<ThermoRoom>();
     private GeoLocation location = new GeoLocation();
 
@@ -38,8 +46,9 @@ public class ThermoHouse {
      * @param temperatures
      */
     public ThermoHouse(double[] temperatures) {
-        for (double temperature : temperatures)
+        for (double temperature : temperatures) {
             this.rooms.add(new ThermoRoom(temperature));
+        }
     }
 
     /**
@@ -50,6 +59,18 @@ public class ThermoHouse {
     public ThermoHouse(double temperature) {
         this(new double[] { temperature });
     }
+
+    // FUNCTIONS
+    public void update() {
+        for (ThermoRoom room : rooms) {
+            double target = temperature;
+            target = (mode == MODE_AC) ? temperature - tolerance : target;
+            target = (mode == MODE_HEAT) ? temperature + tolerance : target;
+            room.update(target, mode);
+        }
+    }
+
+    // GSET
 
     /**
      * Get all rooms
